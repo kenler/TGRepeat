@@ -47,7 +47,6 @@ public class HookInit implements IXposedHookLoadPackage, IXposedHookZygoteInit, 
             return;
         XModuleResources modRes = XModuleResources.createInstance(MODULE_PATH, resparam.res);
         mMsg_repeat = resparam.res.addResource(modRes, R.drawable.msg_repeat);
-
     }
 
     @Override
@@ -55,43 +54,17 @@ public class HookInit implements IXposedHookLoadPackage, IXposedHookZygoteInit, 
         if (lpparam.packageName.equals("org.telegram.messenger.web")) {
             FileLoader = lpparam.classLoader.loadClass("org.telegram.messenger.FileLoader");
             AndroidUtilities = lpparam.classLoader.loadClass("org.telegram.messenger.AndroidUtilities");
-//            XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
-//                @Override
-//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                    /**
-//                     * hook截图禁止
-//                     */
-//                    XposedBridge.log("------attach加载 ");
-//                    Class mBaseFragment = lpparam.classLoader.loadClass("org.telegram.ui.ActionBar.BaseFragment");
-//                    XposedHelpers.findAndHookMethod("org.telegram.messenger.AndroidUtilities", lpparam.classLoader, "setFlagSecure",mBaseFragment, boolean.class, new XC_MethodHook() {
-//                        @Override
-//                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                            XposedBridge.log("------截图hook");
-//                            if((boolean)param.args[1]){
-//                                param.args[1]=false;
-//
-//                            }
-//                        }
-//                        @Override
-//                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                            super.afterHookedMethod(param);
-//
-//                        }
-//                    });
-//                }
-//            });
-            XposedBridge.log("------Hook成功 " + lpparam.packageName);
 
+            XposedBridge.log("------Hook成功 " + lpparam.packageName);
+            /**
+             * HOOK禁止群截图
+             */
             XposedHelpers.findAndHookMethod("org.telegram.messenger.AndroidUtilities", lpparam.classLoader, "updateFlagSecure", Window.class, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-
-
-
                 }
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                    super.afterHookedMethod(param);
 //                    XposedBridge.log("------截图hook"+param.args[0]);
                     Window window =(Window) param.args[0];
                     window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
@@ -181,26 +154,6 @@ public class HookInit implements IXposedHookLoadPackage, IXposedHookZygoteInit, 
                     XposedHelpers.callMethod(fPpp, "addView", newInstance);//往布局里面添加我们的  复读机+1 item
                 }
             });
-//            XposedHelpers.findAndHookMethod("android.view.Window", lpparam.classLoader, "setFlags",int.class,int.class, new XC_MethodHook() {
-//                @Override
-//                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//
-//
-//
-//                }
-//                @Override
-//                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-////                    super.afterHookedMethod(param);
-//
-//                    if((int)param.args[1]==WindowManager.LayoutParams.FLAG_SECURE){
-//                        XposedBridge.log("------截图hook"+thisObj);
-////                        XposedHelpers.callMethod(param.thisObject, "clearFlags",WindowManager.LayoutParams.FLAG_SECURE);
-//                      Window window=(Window)  XposedHelpers.callMethod(thisObj, "getWindow");
-//                      window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
-//                    }
-//
-//                }
-//            });
 
         }
     }
